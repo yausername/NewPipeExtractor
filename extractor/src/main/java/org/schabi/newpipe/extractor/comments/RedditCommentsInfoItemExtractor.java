@@ -72,7 +72,7 @@ public class RedditCommentsInfoItemExtractor implements CommentsInfoItemExtracto
 
     private String getDateTime(long millis) {
         Date date = new Date(millis);
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM d,yyyy h:mm,a", Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm a", Locale.ENGLISH);
         return sdf.format(date);
     }
 
