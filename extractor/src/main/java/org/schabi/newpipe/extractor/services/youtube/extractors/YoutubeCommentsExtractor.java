@@ -100,7 +100,7 @@ public class YoutubeCommentsExtractor extends CommentsExtractor {
         try {
             ajaxJson = JsonParser.array().from(ajaxResponse).getObject(1);
         } catch (Exception e) {
-            throw new ParsingException("Could not parse json data for comments " + pageUrl + " " + ajaxResponse , e);
+            throw new ParsingException("Could not parse json data for comments " + pageUrl + " " + ajaxResponse + " " + ytClientVersion + " " + ytClientName, e);
         }
         CommentsInfoItemsCollector collector = new CommentsInfoItemsCollector(getServiceId());
         collectCommentsFrom(collector, ajaxJson, pageUrl);
