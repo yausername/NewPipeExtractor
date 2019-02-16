@@ -2,6 +2,7 @@ package org.schabi.newpipe.extractor;
 
 import static java.util.Arrays.asList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.schabi.newpipe.extractor.services.media_ccc.MediaCCCService;
@@ -42,11 +43,11 @@ public final class ServiceList {
      * When creating a new service, put this service in the end of this list,
      * and give it the next free id.
      */
-    public static List<StreamingService> SERVICES = asList(
+    public static List<StreamingService> SERVICES = new ArrayList<>(asList(
                     YouTube = new YoutubeService(0),
                     SoundCloud = new SoundcloudService(1),
                     MediaCCC = new MediaCCCService(2)
-            );
+            ));
 
     /**
      * Get all the supported services.
