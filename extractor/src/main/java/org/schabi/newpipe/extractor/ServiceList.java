@@ -1,6 +1,7 @@
 package org.schabi.newpipe.extractor;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +39,15 @@ public final class ServiceList {
     public static final YoutubeService YouTube;
     public static final SoundcloudService SoundCloud;
     public static final MediaCCCService MediaCCC;
+    
+    public static List<StreamingService> EXTRA_SERVICES = new ArrayList<>();
 
     /**
      * When creating a new service, put this service in the end of this list,
      * and give it the next free id.
      */
-    public static List<StreamingService> SERVICES = new ArrayList<>(asList(
+    private static final List<StreamingService> SERVICES = unmodifiableList(
+            asList(
                     YouTube = new YoutubeService(0),
                     SoundCloud = new SoundcloudService(1),
                     MediaCCC = new MediaCCCService(2)
