@@ -1,13 +1,12 @@
 package org.schabi.newpipe.extractor;
 
-import org.schabi.newpipe.extractor.services.media_ccc.MediaCCCService;
-import org.schabi.newpipe.extractor.services.soundcloud.SoundcloudService;
-import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
+import static java.util.Arrays.asList;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
+import org.schabi.newpipe.extractor.services.media_ccc.MediaCCCService;
+import org.schabi.newpipe.extractor.services.soundcloud.SoundcloudService;
+import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 
 /*
  * Copyright (C) Christian Schabesberger 2018 <chris.schabesberger@mailbox.org>
@@ -43,12 +42,11 @@ public final class ServiceList {
      * When creating a new service, put this service in the end of this list,
      * and give it the next free id.
      */
-    private static final List<StreamingService> SERVICES = unmodifiableList(
-            asList(
+    public static List<StreamingService> SERVICES = asList(
                     YouTube = new YoutubeService(0),
                     SoundCloud = new SoundcloudService(1),
                     MediaCCC = new MediaCCCService(2)
-            ));
+            );
 
     /**
      * Get all the supported services.
