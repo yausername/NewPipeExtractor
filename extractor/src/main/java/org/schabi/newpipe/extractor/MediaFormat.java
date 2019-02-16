@@ -32,6 +32,9 @@ public enum MediaFormat {
     MPEG_4      (0x0,   "MPEG-4", "mp4", "video/mp4"),
     v3GPP       (0x10,   "3GPP",   "3gp", "video/3gpp"),
     WEBM        (0x20,   "WebM",  "webm", "video/webm"),
+    HLS        (0x30,   "HLS",  "m3u8", "video/mp4"),
+    UNKNOWN        (0x40,   "UNKNOWN",  "", ""),
+    
     // audio formats
     M4A         (0x100,   "m4a",   "m4a",  "audio/mp4"),
     WEBMA       (0x200,   "WebM",  "webm", "audio/webm"),
