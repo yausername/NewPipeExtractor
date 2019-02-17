@@ -81,6 +81,11 @@ public class NewPipe {
                 return service;
             }
         }
+        for (StreamingService service : ServiceList.EXTRA_SERVICES) {
+            if (service.getLinkTypeByUrl(url) != StreamingService.LinkType.NONE) {
+                return service;
+            }
+        }
         throw new ExtractionException("No service can handle the url = \"" + url + "\"");
     }
 
