@@ -286,11 +286,11 @@ public abstract class StreamingService {
         LinkHandlerFactory cH = getChannelLHFactory();
         LinkHandlerFactory pH = getPlaylistLHFactory();
 
-        if (sH.acceptUrl(url)) {
+        if (null != sH && sH.acceptUrl(url)) {
             return LinkType.STREAM;
-        } else if (cH.acceptUrl(url)) {
+        } else if (null != cH && cH.acceptUrl(url)) {
             return LinkType.CHANNEL;
-        } else if (pH.acceptUrl(url)) {
+        } else if (null != pH && pH.acceptUrl(url)) {
             return LinkType.PLAYLIST;
         } else {
             return LinkType.NONE;
