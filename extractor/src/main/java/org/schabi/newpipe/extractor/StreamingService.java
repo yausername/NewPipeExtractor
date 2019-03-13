@@ -66,7 +66,7 @@ public abstract class StreamingService {
         }
 
         public enum MediaCapability {
-            AUDIO, VIDEO, LIVE
+            AUDIO, VIDEO, LIVE, COMMENTS
         }
     }
 
@@ -222,7 +222,7 @@ public abstract class StreamingService {
     public ChannelExtractor getChannelExtractor(ListLinkHandler linkHandler) throws ExtractionException {
         return getChannelExtractor(linkHandler, NewPipe.getPreferredLocalization());
     }
- 
+    
     public PlaylistExtractor getPlaylistExtractor(ListLinkHandler linkHandler) throws ExtractionException {
         return getPlaylistExtractor(linkHandler, NewPipe.getPreferredLocalization());
     }
@@ -296,12 +296,7 @@ public abstract class StreamingService {
         return getCommentsExtractor(llhf.fromUrl(url), NewPipe.getPreferredLocalization());
     }
 
-    public abstract boolean isCommentsSupported();
 
-
-
-	/**
-     * figure out where the link is pointing to (a channel, video, playlist, etc.)
     /**
      * Figures out where the link is pointing to (a channel, a video, a playlist, etc.)
      * @param url the url on which it should be decided of which link type it is
@@ -313,11 +308,11 @@ public abstract class StreamingService {
         LinkHandlerFactory cH = getChannelLHFactory();
         LinkHandlerFactory pH = getPlaylistLHFactory();
 
-        if (sH.acceptUrl(url)) {
+        if (sH != null && sH.acceptUrl(url)) {
             return LinkType.STREAM;
-        } else if (cH.acceptUrl(url)) {
+        } else if (cH != null && cH.acceptUrl(url)) {
             return LinkType.CHANNEL;
-        } else if (pH.acceptUrl(url)) {
+        } else if (pH != null && pH.acceptUrl(url)) {
             return LinkType.PLAYLIST;
         } else {
             return LinkType.NONE;

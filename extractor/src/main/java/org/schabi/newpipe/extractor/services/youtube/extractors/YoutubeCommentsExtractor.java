@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 
@@ -25,6 +26,7 @@ import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler;
 import org.schabi.newpipe.extractor.utils.JsonUtils;
 import org.schabi.newpipe.extractor.utils.Localization;
+import org.schabi.newpipe.extractor.utils.Parser;
 
 import com.grack.nanojson.JsonArray;
 import com.grack.nanojson.JsonObject;
@@ -33,7 +35,9 @@ import com.grack.nanojson.JsonParser;
 
 public class YoutubeCommentsExtractor extends CommentsExtractor {
 
+    // using the mobile site for comments because it loads faster and uses get requests instead of post
     private static final String USER_AGENT = "Mozilla/5.0 (Android 8.1.0; Mobile; rv:62.0) Gecko/62.0 Firefox/62.0";
+    private static final Pattern YT_CLIENT_NAME_PATTERN = Pattern.compile("INNERTUBE_CONTEXT_CLIENT_NAME\\\":(.*?)[,}]");
 
     private String ytClientVersion;
     private String ytClientName;
@@ -103,11 +107,11 @@ public class YoutubeCommentsExtractor extends CommentsExtractor {
             throw new ParsingException("Could not parse json data for comments", e);
         }
         CommentsInfoItemsCollector collector = new CommentsInfoItemsCollector(getServiceId());
-        collectCommentsFrom(collector, ajaxJson, pageUrl);
+        collectCommentsFrom(collector, ajaxJson);
         return new InfoItemsPage<>(collector, getNextPageUrl(ajaxJson));
     }
 
-    private void collectCommentsFrom(CommentsInfoItemsCollector collector, JsonObject ajaxJson, String pageUrl) throws ParsingException {
+    private void collectCommentsFrom(CommentsInfoItemsCollector collector, JsonObject ajaxJson) throws ParsingException {
         
         JsonArray contents;
         try {
@@ -126,7 +130,7 @@ public class YoutubeCommentsExtractor extends CommentsExtractor {
         
         for(Object c: comments) {
             if(c instanceof JsonObject) {
-                CommentsInfoItemExtractor extractor = new YoutubeCommentsInfoItemExtractor((JsonObject) c, pageUrl);
+                CommentsInfoItemExtractor extractor = new YoutubeCommentsInfoItemExtractor((JsonObject) c, getUrl());
                 collector.commit(extractor);
             }
         }
@@ -150,7 +154,7 @@ public class YoutubeCommentsExtractor extends CommentsExtractor {
         DownloadResponse response = downloader.get(getUrl(), request);
         String responseBody = response.getResponseBody();
         ytClientVersion = findValue(responseBody, "INNERTUBE_CONTEXT_CLIENT_VERSION\":\"", "\"");
-        ytClientName = findValue(responseBody, "INNERTUBE_CONTEXT_CLIENT_NAME\":", ",");
+        ytClientName = Parser.matchGroup1(YT_CLIENT_NAME_PATTERN, responseBody);
         String commentsTokenInside = findValue(responseBody, "commentSectionRenderer", "}");
         String commentsToken = findValue(commentsTokenInside, "continuation\":\"", "\"");
         initPage = getPage(getNextPageUrl(commentsToken));
@@ -206,7 +210,7 @@ public class YoutubeCommentsExtractor extends CommentsExtractor {
                 }
                 return result;
             } catch (Exception e2) {
-                throw new ParsingException("Could not get text", e2);
+                return "";
             }
         }
     }
