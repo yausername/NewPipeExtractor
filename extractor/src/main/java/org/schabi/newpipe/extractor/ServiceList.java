@@ -1,13 +1,14 @@
 package org.schabi.newpipe.extractor;
 
-import org.schabi.newpipe.extractor.services.media_ccc.MediaCCCService;
-import org.schabi.newpipe.extractor.services.soundcloud.SoundcloudService;
-import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
+import org.schabi.newpipe.extractor.services.media_ccc.MediaCCCService;
+import org.schabi.newpipe.extractor.services.reddit.RedditCommentingService;
+import org.schabi.newpipe.extractor.services.soundcloud.SoundcloudService;
+import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 
 /*
  * Copyright (C) Christian Schabesberger 2018 <chris.schabesberger@mailbox.org>
@@ -38,6 +39,8 @@ public final class ServiceList {
     public static final YoutubeService YouTube;
     public static final SoundcloudService SoundCloud;
     public static final MediaCCCService MediaCCC;
+    
+    public static final CommentingService Reddit;
 
     /**
      * When creating a new service, put this service in the end of this list,
@@ -49,6 +52,11 @@ public final class ServiceList {
                     SoundCloud = new SoundcloudService(1),
                     MediaCCC = new MediaCCCService(2)
             ));
+    
+    private static final List<CommentingService> COMMENTING_SERVICES = unmodifiableList(
+            asList(
+                    Reddit = new RedditCommentingService(1000)
+            ));
 
     /**
      * Get all the supported services.
@@ -57,5 +65,9 @@ public final class ServiceList {
      */
     public static List<StreamingService> all() {
         return SERVICES;
+    }
+    
+    public static List<CommentingService> allCommentingServices() {
+        return COMMENTING_SERVICES;
     }
 }

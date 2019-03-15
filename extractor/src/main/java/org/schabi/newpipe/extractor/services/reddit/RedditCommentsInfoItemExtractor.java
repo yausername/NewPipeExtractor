@@ -1,5 +1,6 @@
-package org.schabi.newpipe.extractor.comments;
+package org.schabi.newpipe.extractor.services.reddit;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import org.schabi.newpipe.extractor.comments.CommentsInfoItemExtractor;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.utils.JsonUtils;
 
@@ -24,8 +26,7 @@ public class RedditCommentsInfoItemExtractor implements CommentsInfoItemExtracto
             "FF4500", "FF8717", "FFB000", "FFD635", "DDBD37", "D4E815", "94E044", "46A508", "46D160", "0DD3BB",
             "25B79F", "008985", "24A0ED", "0079D3", "7193FF", "4856A3", "7E53C1", "FF66AC", "DB0064", "EA0027",
             "FF585B");
-    private static final List<String> defaultThumbnailsOptions = Arrays.asList("01", "02", "03", "04", "05", "06", "07",
-            "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20");
+    private static final DecimalFormat defaultThumbnailsOptionsFormat = new DecimalFormat("00");
 
     public RedditCommentsInfoItemExtractor(JsonObject json) {
         this.json = json;
@@ -48,7 +49,7 @@ public class RedditCommentsInfoItemExtractor implements CommentsInfoItemExtracto
     private String getThumbnail() {
         if(null != thumbnail) return thumbnail;
         String randomColor = defaultThumbnailsColors.get(rnd.nextInt(defaultThumbnailsColors.size()));
-        String randomOption = defaultThumbnailsOptions.get(rnd.nextInt(defaultThumbnailsOptions.size()));
+        String randomOption = defaultThumbnailsOptionsFormat.format(rnd.nextInt(20) + 1);
         return AVATAR_ENDPOINT + randomOption + "_" + randomColor + ".png";
     }
 

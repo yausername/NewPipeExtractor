@@ -1,13 +1,20 @@
-package org.schabi.newpipe.extractor.comments;
+package org.schabi.newpipe.extractor.services.reddit;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 
 import org.jsoup.helper.StringUtil;
 import org.schabi.newpipe.extractor.DownloadResponse;
 import org.schabi.newpipe.extractor.Downloader;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.comments.CommentsExtractor;
+import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
+import org.schabi.newpipe.extractor.comments.CommentsInfoItemExtractor;
+import org.schabi.newpipe.extractor.comments.CommentsInfoItemsCollector;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
@@ -27,7 +34,9 @@ public class RedditCommentsExtractor extends CommentsExtractor {
     
     private static final String BASE_ENDPOINT = "https://www.reddit.com";
     private static final String SEARCH_ENDPOINT = "https://api.reddit.com/search.json?syntax=cloudsearch&q=%s&sort=comments&type=link&limit=1";
-    private static final String QUERY_FORMAT = "(url:%s) AND (site:youtube.com OR site:youtu.be)";
+    private static final String QUERY_FORMAT_YT = "(url:%s) AND (site:youtube.com OR site:youtu.be)";
+    private static final String QUERY_FORMAT = "(url:%s) AND (site:%s)";
+    //private static final String SEARCH_ENDPOINT = "https://www.reddit.com/api/info.json?url=%s&sort=comments&type=link&limit=1";
 
     public RedditCommentsExtractor(StreamingService service, ListLinkHandler uiHandler, Localization localization) {
         super(service, uiHandler, localization);
@@ -90,7 +99,7 @@ public class RedditCommentsExtractor extends CommentsExtractor {
         String commentsEndpoint = null;
         try {
             commentsEndpoint = searchComments(getId(), downloader);
-        } catch (JsonParserException e) {
+        } catch (JsonParserException | URISyntaxException e) {
             //nothing to do here
         }
         if(StringUtil.isBlank(commentsEndpoint)) {
@@ -100,9 +109,19 @@ public class RedditCommentsExtractor extends CommentsExtractor {
         }
     }
     
-    private String searchComments(String videoId, Downloader downloader) throws ReCaptchaException, IOException, JsonParserException, ParsingException {
-        String query = String.format(QUERY_FORMAT, videoId);
+    private String searchComments(String videoId, Downloader downloader) throws ReCaptchaException, IOException, JsonParserException, ParsingException, URISyntaxException {
+        String query = null;
+        if(getServiceId() == ServiceList.YouTube.getServiceId()) {
+            query = String.format(QUERY_FORMAT_YT, videoId);
+        }else {
+            URI uri = new URI(getUrl());
+            String host = uri.getHost();
+            StringBuilder url = new StringBuilder(uri.getPath().substring(1));
+            if(uri.getQuery() != null) url.append(uri.getQuery());
+            query = String.format(QUERY_FORMAT, url.toString(), host);
+        }
         String searchUrl = String.format(SEARCH_ENDPOINT, URLEncoder.encode(query, "UTF-8"));
+        //String searchUrl = String.format(SEARCH_ENDPOINT, query);
         DownloadResponse response = downloader.get(searchUrl);
         if (null == response || null == response.getResponseBody()) {
             return "";

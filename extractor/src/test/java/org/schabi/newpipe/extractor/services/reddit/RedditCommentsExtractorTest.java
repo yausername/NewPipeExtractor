@@ -1,4 +1,4 @@
-package org.schabi.newpipe.extractor.comments;
+package org.schabi.newpipe.extractor.services.reddit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,22 +13,22 @@ import org.junit.Test;
 import org.schabi.newpipe.Downloader;
 import org.schabi.newpipe.extractor.ListExtractor.InfoItemsPage;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.comments.CommentsExtractor;
+import org.schabi.newpipe.extractor.comments.CommentsInfo;
+import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeCommentsLinkHandlerFactory;
 import org.schabi.newpipe.extractor.utils.Localization;
 
 public class RedditCommentsExtractorTest {
 
-    private static RedditCommentsExtractor extractor;
-
     @BeforeClass
     public static void setUp() throws Exception {
         NewPipe.init(Downloader.getInstance(), new Localization("GB", "en"));
-        extractor = new RedditCommentsExtractor(YouTube, YoutubeCommentsLinkHandlerFactory.getInstance().fromUrl("https://www.youtube.com/watch?v=6ZfuNTqbHE8"), NewPipe.getPreferredLocalization());
     }
 
     @Test
-    public void testGetComments() throws IOException, ExtractionException {
+    public void testGetCommentsYoutube() throws IOException, ExtractionException {
+        CommentsExtractor extractor = new RedditCommentingService(0).getCommentsExtractor("https://www.youtube.com/watch?v=6ZfuNTqbHE8");
         boolean result = false;
         InfoItemsPage<CommentsInfoItem> comments = extractor.getInitialPage();
         result = findInComments(comments, "This fucker is getting all the stones by the end of that movie. Holy shit.");
@@ -40,9 +40,25 @@ public class RedditCommentsExtractorTest {
 
         assertTrue(result);
     }
+    
+    @Test
+    public void testGetCommentsSoundcloud() throws IOException, ExtractionException {
+        boolean result = false;
+        CommentsExtractor extractor = new RedditCommentingService(0).getCommentsExtractor("https://soundcloud.com/pushat/the-story-of-adidon");
+        InfoItemsPage<CommentsInfoItem> comments = extractor.getInitialPage();
+        result = findInComments(comments, "Jesus Christ Pusha, he has a family. Or at least, you've told us he does");
+
+        while (comments.hasNextPage() && !result) {
+            comments = extractor.getPage(comments.getNextPageUrl());
+            result = findInComments(comments, "Jesus Christ Pusha, he has a family. Or at least, you've told us he does");
+        }
+
+        assertTrue(result);
+    }
 
     @Test
     public void testGetCommentsFromCommentsInfo() throws IOException, ExtractionException {
+        CommentsExtractor extractor = new RedditCommentingService(0).getCommentsExtractor("https://www.youtube.com/watch?v=6ZfuNTqbHE8");
         boolean result = false;
         CommentsInfo commentsInfo = CommentsInfo.getInfo(extractor);
         assertTrue("r/movies".equals(commentsInfo.getName()));
@@ -60,6 +76,7 @@ public class RedditCommentsExtractorTest {
     
     @Test
     public void testGetCommentsAllData() throws IOException, ExtractionException {
+        CommentsExtractor extractor = new RedditCommentingService(0).getCommentsExtractor("https://www.youtube.com/watch?v=6ZfuNTqbHE8");
         InfoItemsPage<CommentsInfoItem> comments = extractor.getInitialPage();
         for(CommentsInfoItem c: comments.getItems()) {
             assertFalse(StringUtil.isBlank(c.getAuthorEndpoint()));

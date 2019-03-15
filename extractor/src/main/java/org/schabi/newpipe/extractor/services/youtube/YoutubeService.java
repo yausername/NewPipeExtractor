@@ -6,6 +6,10 @@ import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCap
 import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.LIVE;
 import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.VIDEO;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.schabi.newpipe.extractor.CommentingService;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.SuggestionExtractor;
 import org.schabi.newpipe.extractor.channel.ChannelExtractor;
@@ -59,10 +63,14 @@ import org.schabi.newpipe.extractor.utils.Localization;
  * along with NewPipe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class YoutubeService extends StreamingService {
-
+public class YoutubeService extends StreamingService implements CommentingService {
+    
+    private final List<CommentingService> commentingServices;
+    
     public YoutubeService(int id) {
         super(id, "YouTube", asList(AUDIO, VIDEO, LIVE, COMMENTS));
+        commentingServices = Arrays.asList((CommentingService)this);
+        commentingServices.addAll(super.getCommentingServices());
     }
 
     @Override
@@ -149,6 +157,11 @@ public class YoutubeService extends StreamingService {
     public CommentsExtractor getCommentsExtractor(ListLinkHandler urlIdHandler, Localization localization)
             throws ExtractionException {
         return new YoutubeCommentsExtractor(this, urlIdHandler, localization);
+    }
+    
+    @Override
+    public List<CommentingService> getCommentingServices(){
+        return commentingServices;
     }
 
 }

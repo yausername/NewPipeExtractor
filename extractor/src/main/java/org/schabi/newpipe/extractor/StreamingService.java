@@ -38,7 +38,7 @@ import org.schabi.newpipe.extractor.utils.Localization;
  * along with NewPipe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class StreamingService {
+public abstract class StreamingService{
 
     /**
      * This class holds meta information about the service implementation.
@@ -317,5 +317,13 @@ public abstract class StreamingService {
         } else {
             return LinkType.NONE;
         }
+    }
+    
+    public final String getName() {
+        return serviceInfo.getName();
+    }
+    
+    public List<CommentingService> getCommentingServices(){
+        return NewPipe.getCommentingServices();
     }
 }

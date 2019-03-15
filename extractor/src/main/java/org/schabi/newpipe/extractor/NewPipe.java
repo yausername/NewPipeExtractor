@@ -1,5 +1,7 @@
 package org.schabi.newpipe.extractor;
 
+import java.util.List;
+
 /*
  * Created by Christian Schabesberger on 23.08.15.
  *
@@ -22,8 +24,6 @@ package org.schabi.newpipe.extractor;
 
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.utils.Localization;
-
-import java.util.List;
 
 /**
  * Provides access to streaming services supported by NewPipe.
@@ -50,6 +50,10 @@ public class NewPipe {
 
     public static List<StreamingService> getServices() {
         return ServiceList.all();
+    }
+    
+    public static List<CommentingService> getCommentingServices() {
+        return ServiceList.allCommentingServices();
     }
 
     public static StreamingService getService(int serviceId) throws ExtractionException {
