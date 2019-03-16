@@ -6,7 +6,7 @@ import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCap
 import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.LIVE;
 import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.VIDEO;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.schabi.newpipe.extractor.CommentingService;
@@ -69,7 +69,8 @@ public class YoutubeService extends StreamingService implements CommentingServic
     
     public YoutubeService(int id) {
         super(id, "YouTube", asList(AUDIO, VIDEO, LIVE, COMMENTS));
-        commentingServices = Arrays.asList((CommentingService)this);
+        commentingServices = new ArrayList<>();
+        commentingServices.add((CommentingService)this);
         commentingServices.addAll(super.getCommentingServices());
     }
 
