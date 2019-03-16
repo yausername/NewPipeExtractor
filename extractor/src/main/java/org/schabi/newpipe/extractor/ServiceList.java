@@ -42,6 +42,10 @@ public final class ServiceList {
     
     public static final CommentingService Reddit;
 
+    private static final List<CommentingService> COMMENTING_SERVICES = unmodifiableList(
+            asList(
+                    Reddit = new RedditCommentingService(1000)
+            ));
     /**
      * When creating a new service, put this service in the end of this list,
      * and give it the next free id.
@@ -51,11 +55,6 @@ public final class ServiceList {
                     YouTube = new YoutubeService(0),
                     SoundCloud = new SoundcloudService(1),
                     MediaCCC = new MediaCCCService(2)
-            ));
-    
-    private static final List<CommentingService> COMMENTING_SERVICES = unmodifiableList(
-            asList(
-                    Reddit = new RedditCommentingService(1000)
             ));
 
     /**
