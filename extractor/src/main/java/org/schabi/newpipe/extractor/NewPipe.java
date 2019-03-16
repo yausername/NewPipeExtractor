@@ -87,6 +87,20 @@ public class NewPipe {
         }
         throw new ExtractionException("There's no service with the name = \"" + serviceName + "\"");
     }
+    
+    public static CommentingService getCommentingService(String serviceName) throws ExtractionException {
+        for (StreamingService service : ServiceList.all()) {
+            if (service.getServiceInfo().getName().equals(serviceName) && service instanceof CommentingService) {
+                return (CommentingService)service;
+            }
+        }
+        for (CommentingService service : ServiceList.allCommentingServices()) {
+            if (service.getName().equals(serviceName)) {
+                return service;
+            }
+        }
+        throw new ExtractionException("There's no commenting service with the name = \"" + serviceName + "\"");
+    }
 
     public static StreamingService getServiceByUrl(String url) throws ExtractionException {
         for (StreamingService service : ServiceList.all()) {
@@ -101,6 +115,15 @@ public class NewPipe {
         try {
             //noinspection ConstantConditions
             return getService(serviceName).getServiceId();
+        } catch (ExtractionException ignored) {
+            return -1;
+        }
+    }
+    
+    public static int getIdOfCommentingService(String serviceName) {
+        try {
+            //noinspection ConstantConditions
+            return getCommentingService(serviceName).getServiceId();
         } catch (ExtractionException ignored) {
             return -1;
         }
