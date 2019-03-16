@@ -64,6 +64,20 @@ public class NewPipe {
         }
         throw new ExtractionException("There's no service with the id = \"" + serviceId + "\"");
     }
+    
+    public static CommentingService getCommentingService(int serviceId) throws ExtractionException {
+        for (StreamingService service : ServiceList.all()) {
+            if (service.getServiceId() == serviceId && service instanceof CommentingService) {
+                return (CommentingService)service;
+            }
+        }
+        for (CommentingService service : ServiceList.allCommentingServices()) {
+            if (service.getServiceId() == serviceId) {
+                return service;
+            }
+        }
+        throw new ExtractionException("There's no commenting service with the id = \"" + serviceId + "\"");
+    }
 
     public static StreamingService getService(String serviceName) throws ExtractionException {
         for (StreamingService service : ServiceList.all()) {
